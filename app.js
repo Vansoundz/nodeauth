@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/authMiddleware");
-
+require("dotenv").config();
 const app = express();
 
 // middleware
@@ -16,12 +16,14 @@ app.set("view engine", "ejs");
 
 // const dbURI = 'mongodb+srv://shaun:test1234@cluster0.del96.mongodb.net/node-auth';
 // const dbURI = "mongodb://localhost:27017/node-auth";
-const dbURI = "mongodb+srv://vansoundz:$D011ar$@test.zkqsl.mongodb.net/nauth";
+// const dbURI = "mongodb+srv://vansoundz:$D011ar$@test.zkqsl.mongodb.net/nauth";
 
 const PORT = process.env.PORT || 3000;
 
+console.log(process.env.URI);
+
 mongoose
-  .connect(dbURI, {
+  .connect(process.env.URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
