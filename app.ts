@@ -1,10 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const authRoutes = require("./routes/auth");
-const cookieParser = require("cookie-parser");
+// const express = require("express");
+import express from "express";
+import mongoose from "mongoose";
+import { config } from "dotenv";
+import cookieParser from "cookie-parser";
 const { requireAuth, checkUser } = require("./middleware/authMiddleware");
-require("dotenv").config();
+const authRoutes = require("./routes/auth");
 const app = express();
+
+config();
 
 // middleware
 app.use(express.static("public"));
@@ -23,7 +26,7 @@ const PORT = process.env.PORT || 3000;
 console.log(process.env.URI);
 
 mongoose
-  .connect(process.env.URI, {
+  .connect(process.env.URI!, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

@@ -1,39 +1,23 @@
-const User = require("../models/User");
-const { validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken");
+import { User } from "../models/User";
+import { validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
 
 const maxAge = 3 * 24 * 60 * 60;
 
-const createToken = (id) => {
+const createToken = (id: string) => {
   return jwt.sign({ id }, "smart people read the star", { expiresIn: maxAge });
 };
 
-/**
- *
- * @param {Express.Request} req
- * @param {Express.Response} res
- */
-
-module.exports.signup_get = (req, res) => {
+module.exports.signup_get = (req: Request, res: Response) => {
   res.render("signup");
 };
-/**
- *
- * @param {Express.Request} req
- * @param {Express.Response} res
- */
 
-module.exports.login_get = (req, res) => {
+module.exports.login_get = (req: Request, res: Response) => {
   res.render("login");
 };
 
-/**
- *
- * @param {Express.Request} req
- * @param {Express.Response} res
- */
-
-module.exports.signup_post = async (req, res) => {
+module.exports.signup_post = async (req: Request, res: Response) => {
   const errs = validationResult(req);
   const { email, password } = req.body;
 
@@ -63,19 +47,15 @@ module.exports.signup_post = async (req, res) => {
   res.cookie("_at", token, { httpOnly: true, maxAge: maxAge * 1000 });
   res.status(201).json({ user: user._id });
 };
-/**
- *
- * @param {Express.Request} req
- * @param {Express.Response} res
- */
 
-module.exports.login_post = async (req, res) => {
+module.exports.login_post = async (req: Request, res: Response) => {
   const errs = validationResult(req);
   const { email, password } = req.body;
   if (!errs.isEmpty()) {
     return res.status(400).json({ errors: errs.array() });
   }
   try {
+    // @ts-ignore
     const user = await User.login(email, password);
     const token = createToken(user._id);
     res.cookie("_at", token, { httpOnly: true, maxAge: maxAge * 1000 });
@@ -108,7 +88,7 @@ module.exports.login_post = async (req, res) => {
  * @param {Express.Response} res
  */
 
-module.exports.logout_get = (req, res) => {
+module.exports.logout_get = (req: Request, res: Response) => {
   res.cookie("_at", "", { maxAge: 1 });
   res.redirect("/");
 };

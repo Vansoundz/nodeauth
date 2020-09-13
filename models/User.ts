@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const { isEmail } = require("validator");
-const bcrypt = require("bcrypt");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import { HookNextFunction } from "mongoose";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email is required"],
     unique: true,
     lowercase: true,
-    validate: [isEmail, "Invalid email"],
   },
   password: {
     type: String,
@@ -17,13 +16,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (this: any, next: HookNextFunction) {
   const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password! = await bcrypt.hash(this.password!, salt);
   next();
 });
 
-userSchema.statics.login = async function (email, password) {
+userSchema.statics.login = async function (email: string, password: string) {
   const user = await this.findOne({ email });
   if (user) {
     const isEqual = await bcrypt.compare(password, user.password);
@@ -37,4 +36,4 @@ userSchema.statics.login = async function (email, password) {
 
 const User = mongoose.model("user", userSchema);
 
-module.exports = User;
+export { User };
